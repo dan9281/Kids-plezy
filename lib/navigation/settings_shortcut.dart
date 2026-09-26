@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../kids/parent_gate.dart';
 import '../screens/settings/settings_screen.dart';
 import '../utils/platform_detector.dart';
 import '../utils/video_player_navigation.dart';
@@ -16,7 +17,7 @@ const String kSettingsRouteName = '/settings';
 MaterialPageRoute<void> buildSettingsRoute() {
   return MaterialPageRoute<void>(
     settings: const RouteSettings(name: kSettingsRouteName),
-    builder: (_) => const SettingsScreen(),
+    builder: (_) => const ParentGate(relockOnDispose: true, child: SettingsScreen()),
   );
 }
 

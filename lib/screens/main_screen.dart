@@ -72,6 +72,8 @@ import 'livetv/live_tv_screen.dart';
 import 'search_screen.dart';
 import 'downloads/downloads_screen.dart';
 import 'settings/settings_screen.dart';
+import '../kids/kids_config.dart';
+import '../kids/parent_gate.dart';
 import 'profile/profile_switch_screen.dart';
 import 'video_player_screen.dart';
 import 'profile/profile_teardown.dart';
@@ -1234,7 +1236,7 @@ class _MainScreenState extends State<MainScreen>
       NavigationTabId.liveTv => LiveTvScreen(key: _screenKeys[tab]),
       NavigationTabId.search => SearchScreen(key: _screenKeys[tab]),
       NavigationTabId.downloads => DownloadsScreen(key: _screenKeys[tab]),
-      NavigationTabId.settings => SettingsScreen(key: _screenKeys[tab]),
+      NavigationTabId.settings => ParentGate(child: SettingsScreen(key: _screenKeys[tab])),
     };
   }
 
@@ -1758,6 +1760,8 @@ class _MainScreenState extends State<MainScreen>
 
     final previousTab = _currentTab;
     final wasMounted = _mountedTabs.contains(tab);
+    // Kids build: leaving Settings locks it again behind the parent PIN.
+    if (previousTab == NavigationTabId.settings && tab != NavigationTabId.settings) KidsConfig.lock();
     setState(() {
       _currentTab = tab;
       if (!wasMounted) {

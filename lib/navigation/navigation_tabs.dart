@@ -3,6 +3,7 @@ import 'package:plezy/widgets/app_icon.dart';
 import 'package:material_symbols_icons/symbols.dart';
 
 import '../i18n/strings.g.dart';
+import '../kids/kids_config.dart';
 import '../utils/platform_detector.dart';
 
 /// Navigation tab identifiers
@@ -47,6 +48,7 @@ class NavigationTab {
     bool hasExplore = false,
   }) {
     return allNavigationTabs.where((tab) {
+      if (KidsConfig.hiddenTabs.contains(tab.id)) return false;
       if (isOffline && tab.onlineOnly) return false;
       if (tab.id == NavigationTabId.liveTv && !hasLiveTv) return false;
       if (tab.id == NavigationTabId.explore && !hasExplore) return false;

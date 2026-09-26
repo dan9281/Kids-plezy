@@ -17,31 +17,39 @@ ThemeData monoTheme({required bool dark, bool oled = false}) {
 }
 
 ThemeData _buildMonoTheme({required bool dark, required bool oled, required TargetPlatform platform}) {
-  // neutral greys tuned for crisp contrast
-  final ({Color bg, Color surface, Color outline, Color text, Color textMuted}) c;
+  // Kids Plezy palette: deep "night sky" purple with a sunshine-yellow
+  // accent in dark mode, warm cream with a bright orange accent in light mode.
+  // The accent drives buttons, selected tabs, progress and focus highlights.
+  final ({Color bg, Color surface, Color outline, Color text, Color textMuted, Color accent, Color onAccent}) c;
   if (oled) {
     c = (
       bg: const Color(0xFF000000), // Pure black for OLED
-      surface: const Color(0xFF0A0A0A), // Very dark gray
-      outline: const Color(0x1FFFFFFF),
-      text: const Color(0xFFEDEDED),
-      textMuted: const Color(0x99EDEDED),
+      surface: const Color(0xFF1A1440),
+      outline: const Color(0x33FFFFFF),
+      text: const Color(0xFFFFFFFF),
+      textMuted: const Color(0xB3FFFFFF),
+      accent: const Color(0xFFFFC83D),
+      onAccent: const Color(0xFF1B1446),
     );
   } else if (dark) {
     c = (
-      bg: const Color(0xFF0E0F12),
-      surface: const Color(0xFF15171C),
-      outline: const Color(0x1FFFFFFF),
-      text: const Color(0xFFEDEDED),
-      textMuted: const Color(0x99EDEDED),
+      bg: const Color(0xFF1B1446),
+      surface: const Color(0xFF2B2270),
+      outline: const Color(0x33FFFFFF),
+      text: const Color(0xFFFFFFFF),
+      textMuted: const Color(0xB3FFFFFF),
+      accent: const Color(0xFFFFC83D),
+      onAccent: const Color(0xFF1B1446),
     );
   } else {
     c = (
-      bg: const Color(0xFFF7F7F8),
+      bg: const Color(0xFFFFF6E5),
       surface: const Color(0xFFFFFFFF),
-      outline: const Color(0x19000000),
-      text: const Color(0xFF111111),
-      textMuted: const Color(0x99111111),
+      outline: const Color(0x262B2270),
+      text: const Color(0xFF2B2270),
+      textMuted: const Color(0xB32B2270),
+      accent: const Color(0xFFFF7A1A),
+      onAccent: const Color(0xFFFFFFFF),
     );
   }
 
@@ -54,8 +62,8 @@ ThemeData _buildMonoTheme({required bool dark, required bool oled, required Targ
     mouseCursor: clickableCursor,
     padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 18, vertical: 14)),
     elevation: const WidgetStatePropertyAll(0),
-    backgroundColor: WidgetStatePropertyAll(c.text),
-    foregroundColor: WidgetStatePropertyAll(isDark ? c.bg : Colors.white),
+    backgroundColor: WidgetStatePropertyAll(c.accent),
+    foregroundColor: WidgetStatePropertyAll(c.onAccent),
     shape: const WidgetStatePropertyAll(StadiumBorder()),
   );
 
@@ -69,8 +77,8 @@ ThemeData _buildMonoTheme({required bool dark, required bool oled, required Targ
     fontFamilyFallback: platform == TargetPlatform.linux ? const ['Go Noto Current', 'Go Noto Current Hangul'] : null,
     colorScheme: ColorScheme(
       brightness: isDark ? Brightness.dark : Brightness.light,
-      primary: c.text,
-      onPrimary: isDark ? c.bg : Colors.white,
+      primary: c.accent,
+      onPrimary: c.onAccent,
       secondary: c.text,
       onSecondary: c.bg,
       surface: c.surface,
@@ -99,7 +107,7 @@ ThemeData _buildMonoTheme({required bool dark, required bool oled, required Targ
     highlightColor: Colors.transparent,
     // Explicit mono-derived tile highlights: ListTile's native focus/hover
     // fill is the dpad focus visual inside M3E grouped-list cards.
-    focusColor: c.text.withValues(alpha: 0.12),
+    focusColor: c.accent.withValues(alpha: 0.35),
     hoverColor: c.text.withValues(alpha: 0.05),
     dividerColor: c.outline,
     scaffoldBackgroundColor: c.bg,
@@ -123,7 +131,7 @@ ThemeData _buildMonoTheme({required bool dark, required bool oled, required Targ
       color: c.surface,
       elevation: 0,
       margin: .zero,
-      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(14))),
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.all(Radius.circular(22))),
     ),
     inputDecorationTheme: _inputDecorationTheme(c.text, c.textMuted),
     elevatedButtonTheme: ElevatedButtonThemeData(style: buttonStyle),
@@ -159,7 +167,7 @@ ThemeData _buildMonoTheme({required bool dark, required bool oled, required Targ
       labelTextStyle: WidgetStatePropertyAll(TextStyle(color: c.textMuted, fontSize: 11)),
       iconTheme: WidgetStateProperty.resolveWith((states) {
         final active = states.contains(WidgetState.selected);
-        return IconThemeData(opacity: active ? 1 : 0.6, size: 22, color: c.text);
+        return IconThemeData(opacity: active ? 1 : 0.6, size: 26, color: active ? c.accent : c.text);
       }),
     ),
     // Floating snackbars auto-offset above the Scaffold's bottom NavigationBar,
@@ -179,10 +187,10 @@ ThemeData _buildMonoTheme({required bool dark, required bool oled, required Targ
   return base.copyWith(
     extensions: [
       MonoTokens(
-        radiusSm: 8,
-        radiusMd: 12,
-        radiusLg: 20,
-        radiusXs: 5,
+        radiusSm: 12,
+        radiusMd: 18,
+        radiusLg: 28,
+        radiusXs: 6,
         groupGap: 2,
         space: 12,
         fast: const Duration(milliseconds: 120),
