@@ -1,0 +1,62 @@
+name: Kids iOS
+
+# Builds an UNSIGNED Kids Plezy .ipa for iPad/iPhone every time the kids
+# branch is pushed, or on demand from the Actions tab ("Run workflow").
+# Install it with Sideloadly (Windows/Mac) or AltStore/SideStore, which sign
+# it with your own Apple ID. With a free Apple ID the app must be reinstalled
+# every 7 days.
+on:
+  push:
+    branches: [kids]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  ipa:
+    runs-on: macos-26
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2
+        with:
+          channel: stable
+          flutter-version: "3.47.1"
+          cache: true
+
+      - name: Cache CocoaPods
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6
+        with:
+          path: |
+            ios/Pods
+            ~/Library/Caches/CocoaPods
+            ~/.cocoapods
+          key: kids-${{ runner.os }}-ios-pods-${{ hashFiles('**/Podfile.lock') }}
+
+      - name: Dependencies
+        run: flutter pub get
+
+      - name: Codegen
+        run: |
+          dart run slang
+          dart run build_runner build --delete-conflicting-outputs
+
+      - name: Build iOS (no codesign)
+        run: flutter build ios --release --no-codesign
+
+      - name: Create IPA
+        run: |
+          mkdir -p Payload
+          cp -R build/ios/iphoneos/*.app Payload/
+          zip -qr kids-plezy-ios.ipa Payload
+
+      - name: Upload IPA
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: kids-plezy-ios-ipa
+          path: kids-plezy-ios.ipa
+          retention-days: 30

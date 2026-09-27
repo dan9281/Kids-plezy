@@ -3,7 +3,7 @@
   Kids Plezy
 </h1>
 
-A kids-only media player for Android phones, Android TV and Amazon Fire TV Stick. It connects to your own Jellyfin, Plex or Emby server and gives children a bright, simple, remote-friendly way to watch their shows, with the grown-up bits locked away.
+A kids-only media player for Android phones, Android TV, Amazon Fire TV Stick and iPad. It connects to your own Jellyfin, Plex or Emby server and gives children a bright, simple, remote-friendly way to watch their shows, with the grown-up bits locked away.
 
 Kids Plezy is a personal fork of [Plezy](https://github.com/edde746/plezy) by edde746. All the playback, library and server support comes from Plezy; this fork changes the look and trims the app down for children.
 
@@ -30,6 +30,8 @@ One APK works on phones, tablets, Android TV and Fire TV. Android 7.1 (Fire OS 6
 **Phone or tablet:** tap `app-release.apk` and allow "Install unknown apps" for your file manager or browser when asked. If Play Protect warns about it, choose **More details → Install anyway**. It's flagged only because it isn't from the Play Store.
 
 **Fire TV Stick:** turn on **Settings → My Fire TV → Developer options → Install unknown apps** for the Downloader app. Then either download the APK in Downloader, or send it over with an app like LocalSend and open it from there.
+
+**iPad / iPhone:** download **kids-plezy-ios-ipa** from the latest **[Kids iOS build](../../actions/workflows/kids-ios.yml)** and unzip it to get `kids-plezy-ios.ipa`. The file is unsigned, so install it with [Sideloadly](https://sideloadly.io) on a Windows PC or Mac: plug in the iPad, drag the IPA in, sign in with your Apple ID and click Start. On the iPad, trust your Apple ID under **Settings → General → VPN & Device Management**, and turn on **Settings → Privacy & Security → Developer Mode** when asked. With a free Apple ID the app stops opening after 7 days, so reinstall it the same way (your settings are kept). A paid Apple Developer account removes the 7-day limit.
 
 **Updating:** install the new APK over the top. If Android says **"App not installed"**, the new build was signed with a different key from the one installed (see [Signing](#signing)). Uninstall Kids Plezy, then install the new APK.
 
