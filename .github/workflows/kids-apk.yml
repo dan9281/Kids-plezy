@@ -39,6 +39,23 @@ jobs:
           dart run slang
           dart run build_runner build --delete-conflicting-outputs
 
+      # Sign with Dan's permanent key when the secrets are set, so each new APK
+      # installs over the last one. Without them the build falls back to a
+      # throwaway debug key (uninstall the old app before installing).
+      - name: Configure signing
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KIDS_KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KIDS_KEYSTORE_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ] && [ -n "$KEYSTORE_PASSWORD" ]; then
+            echo "$KEYSTORE_BASE64" | base64 --decode > android/app/kids-release.jks
+            printf 'storePassword=%s\nkeyPassword=%s\nkeyAlias=kids\nstoreFile=kids-release.jks\n' \
+              "$KEYSTORE_PASSWORD" "$KEYSTORE_PASSWORD" > android/key.properties
+            echo "Signing with permanent Kids key"
+          else
+            echo "::warning::KIDS_KEYSTORE secrets not set - using a throwaway debug key"
+          fi
+
       - name: Build APK
         run: flutter build apk --release
 
@@ -48,3 +65,7 @@ jobs:
           name: kids-plezy-apk
           path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 30
+
+      - name: Clean up keystore
+        if: always()
+        run: rm -f android/app/kids-release.jks android/key.properties
