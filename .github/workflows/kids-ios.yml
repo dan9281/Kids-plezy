@@ -46,7 +46,16 @@ jobs:
           dart run build_runner build --delete-conflicting-outputs
 
       - name: Build iOS (no codesign)
-        run: flutter build ios --release --no-codesign
+        run: |
+          set -o pipefail
+          flutter build ios --release --no-codesign 2>&1 | tee build-ios.log
+
+      # Surface the real error as a job annotation (visible on the run page).
+      - name: Show build errors
+        if: failure()
+        run: |
+          msg=$(grep -iE "error|failed|exception" build-ios.log | grep -viE "warning|-Werror|error_" | head -60 | cut -c1-400 | sed -e ':a' -e 'N' -e '$!ba' -e 's/%/%25/g; s/\n/%0A/g')
+          echo "::error title=iOS build failed::${msg:-see log}"
 
       - name: Create IPA
         run: |
